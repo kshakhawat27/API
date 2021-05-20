@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "Names";
+}
+
+<h2>Names</h2>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<input type="text" id="txtName"/>
+<button id="btnSave">Save</button>
+
+<table  id="tblClass">
+    <thead>
+        <tr>
+            <th>Class ID</th>
+            <th>Class Name</th>
+            <th>added By</th>
+        </tr>
+    </thead>
+    <tbody>
+
+
+    </tbody>
+</table>
+<script>
+
+    $(function () {
+        LoadAllData();
+        // $("#txtName")// id thats why # or class then use .
+        $(document).delegate('#btnSave', 'click', function(e){
+            e.preventDefault();
+            SaveData();
+        });
+    });
+
+    function LoadAllData() {
+        $.ajax({
+            type: "GET",
+            contentType: "application/json; charset=utf-8",
+            url: "/Class/LoadAllData",    /// first controller name/method
+            data: {},
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                alert(data.Success);
+                //alert(data.length);
+
+              $("#tblClass tbody").empty();
+                var _table = "";
+                $.each(data, function (k, val) {
+                    _table += "<tr><td>"+val.ClassID+"</td><td>"+val.ClassName+"</td><td>"+val.AddedBy+"</td></tr>";
+                });
+                $("#tblClass tbody").append(_table);
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+
+        });
+
+    }
+
+    function SaveData() {
+        var _Name = $("#txtName").val();
+       // alert(_Name);
+        var _dbModel = { 'ClassName': _Name };
+
+        $.ajax({
+            type: "post",
+            contentType: "application/json; charset=utf-8",
+            url: "/Class/SaveData",
+            data: JSON.stringify(_dbModel),
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                alert(data.Success);
+
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+
+        });
+
+    }
+    
+    
+</script>
